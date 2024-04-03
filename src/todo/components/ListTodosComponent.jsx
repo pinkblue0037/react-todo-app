@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { retriveBoardListForUsername } from '../api/HelloWorldApiService';
 
 const ListTodosComponent = () => {
 
-
-    const today = new Date()
-    const targetDate = new Date(today.getFullYear()+12, today.getDate(), today.getDay())
-
-    const todos = [
-        {id:1, description: 'Learn AWS', done:false, targetDt:targetDate},
-        {id:2, description: 'Learn DevOps', done:false, targetDt:targetDate},
-        {id:3, description: 'Learn CrossFit', done:false, targetDt:targetDate}
-    ]
-
-    console.log(todos)
+    const [todos, setTodos] = useState([])
+    
+    useEffect(() =>refreshTodos(),[])
+        
+    function refreshTodos() {
+        retriveBoardListForUsername('admin')
+            .then((response) => {
+                setTodos(response.data)
+            })
+            .catch((err) => console.log(err))  
+    }
 
     return (
         <div className='container'>
@@ -21,26 +22,24 @@ const ListTodosComponent = () => {
                 <table className='table'>
                     <thead>
                         <tr>
-                            <td>Id</td>
-                            <td>Desc</td>
-                            <td>IsDone</td>
-                            <td>TargetDt</td>
+                            <td>num</td>
+                            <td>description</td>
+                            <td>title</td>
+                            <td>writer</td>
                         </tr>
                     </thead>
                     <tbody>
                         {
                             todos.map(value => (
-                                <tr key={value.id}>
-                                    <td>{value.id}</td>
+                                <tr key={value.num}>
+                                    <td>{value.num}</td>
                                     <td>{value.description}</td>
-                                    <td>{value.done.toString()}</td>
-                                    <td>{value.targetDt.toDateString()}</td>
+                                    <td>{value.title}</td>
+                                    <td>{value.writer}</td>
                                 </tr>
                                 )
                             )
                         }
-
-                       
                     </tbody>
                 </table>
             </div>
